@@ -1,1 +1,0 @@
-web: dingdong-backend
