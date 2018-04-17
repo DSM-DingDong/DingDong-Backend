@@ -13,18 +13,3 @@ class Config(object):
     JWT_ACCESS_TOKEN_EXPIRES = timedelta(days=30)
     JWT_REFRESH_TOKEN_EXPIRES = timedelta(days=365)
     JWT_HEADER_TYPE = 'JWT'
-
-    SWAGGER = {
-        'title': SERVICE_NAME,
-        'specs_route': '/docs/',
-        'uiversion': 3,
-
-        'info': {
-            'title': SERVICE_NAME + ' API',
-            'version': '1.0',
-            'description': ''
-        },
-
-        'host': '{}:{}'.format(REPRESENTATIVE_HOST, PORT) if REPRESENTATIVE_HOST else None,
-        'basePath': '/ '
-    }

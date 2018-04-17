@@ -1,9 +1,7 @@
 from flask import Flask
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager
-from flasgger import Swagger
 
-from app.docs import TEMPLATE
 from app.models import Mongo
 from app.views import Router
 
@@ -25,7 +23,6 @@ def create_app(dev=True):
 
     CORS().init_app(app_)
     JWTManager().init_app(app_)
-    Swagger(template=TEMPLATE).init_app(app_)
     Mongo().init_app(app_)
     Router().init_app(app_)
 
