@@ -55,7 +55,7 @@ class InitializeInfo(BaseResource):
         id = request.json['id']
         shortest_cycle = request.json['shortestCycle']
         longest_cycle = request.json['longestCycle']
-        latest_mens_start_date_str = datetime.strptime(request.json['latestMensStartDate'], '%Y-%m-%d')
+        latest_mens_start_date = datetime.strptime(request.json['latestMensStartDate'], '%Y-%m-%d')
 
         account = AccountBase.objects(id=id).first()
 
@@ -69,10 +69,8 @@ class InitializeInfo(BaseResource):
                 'msg': 'cycle'
             }
 
-        if 26 <= shortest_cycle <= longest_cycle <= 32:
-            # 표준일 피임법
-            pass
-        else:
-            # 리듬피임법(크나우스 오기노법)
-            pass
-
+        account.update(
+            shortest_cycle=shortest_cycle,
+            longest_cycle=longest_cycle,
+            latest_mens_start_date=latest_mens_start_date
+        )

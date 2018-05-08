@@ -20,9 +20,19 @@ class AccountBase(Document):
 
     shortest_cycle = IntField()
     longest_cycle = IntField()
-    latest_mens_start_date = DateTimeField()
+    # 최근 6개월 간 가장 짧은 주기와 가장 긴 주기
 
-    predicted_next_mens_start_date = DateTimeField()
+    latest_mens_start_date = DateTimeField()
+    # 가장 최근 월경시장일
+
+    calendar = DictField(required=True, default={})
+    # 안전일: 1
+    # 가임일: 2
+    # 월경시작일: 3
+    # 월경중: 4
+    # 월경종료일: 5
+    calendar_last_modified_time = DateTimeField()
+    # calendar 필드가 마지막으로 바뀐 시간
 
 
 class SystemAccountModel(AccountBase):
