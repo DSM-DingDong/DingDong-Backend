@@ -3,10 +3,11 @@ from config import Config
 
 class DevConfig(Config):
     HOST = 'localhost'
+    PORT = 5000
     DEBUG = True
 
-    MONGODB_SETTINGS = {
-        'host': 'localhost',
-        'port': 27017,
-        'db': '{}-dev'.format(Config.SERVICE_NAME)
-    }
+    RUN_SETTING = dict(Config.RUN_SETTING, **{
+        'host': HOST,
+        'port': PORT,
+        'debug': DEBUG
+    })
