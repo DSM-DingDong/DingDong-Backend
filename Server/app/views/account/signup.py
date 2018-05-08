@@ -1,11 +1,11 @@
 from datetime import datetime
 
-from flask import Blueprint, Response, abort, g, request
+from flask import Blueprint, Response, abort, current_app, request
 from flask_restful import Api
 from werkzeug.security import generate_password_hash
 
 from app.models.account import AccountBase, SystemAccountModel
-from app.views import BaseResource, auth_required, json_required
+from app.views import BaseResource, json_required
 
 api = Api(Blueprint(__name__, __name__))
 
@@ -74,3 +74,6 @@ class InitializeInfo(BaseResource):
             longest_cycle=longest_cycle,
             latest_mens_start_date=latest_mens_start_date
         )
+
+        kafka_producer = current_app.config['KAFKA_PRODUCER']
+        kafka_producer.send('id_needs_calendar_refresh', {'id': id})
