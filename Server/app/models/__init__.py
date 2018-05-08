@@ -1,7 +1,7 @@
 from mongoengine import *
 
 
-class Mongo(object):
+class Mongo:
     """
     MongoDB connection helper class like standard flask 3-rd party libraries
     """
@@ -12,4 +12,5 @@ class Mongo(object):
     def init_app(self, app):
         setting = app.config['MONGODB_SETTINGS']
 
-        connect(setting['db'], host=setting['host'], port=setting['port'])
+        connect(**setting)
+        print('[INFO] MongoEngine initialized with {}'.format(setting))
