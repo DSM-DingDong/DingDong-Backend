@@ -1,3 +1,6 @@
+from kafka import KafkaProducer
+import ujson
+
 from flask import Flask
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager
@@ -24,5 +27,12 @@ def create_app(*config_cls):
     JWTManager().init_app(app_)
     Mongo().init_app(app_)
     Router().init_app(app_)
+
+    kafka_producer = KafkaProducer(
+        bootstrap_servers=app_.config['KAFKA_BROKERS'],
+        value_serializer=lambda v: ujson.dumps(v).encode('utf-8')
+    )
+
+    app_.config['KAFKA_PRODUCER'] = kafka_producer
 
     return app_

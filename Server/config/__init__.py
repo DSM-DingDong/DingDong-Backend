@@ -16,9 +16,3 @@ class Config:
     JWT_ACCESS_TOKEN_EXPIRES = timedelta(days=30)
     JWT_REFRESH_TOKEN_EXPIRES = timedelta(days=365)
     JWT_HEADER_TYPE = 'JWT'
-
-    MONGODB_SETTINGS = {
-        'db': SERVICE_NAME,
-        'username': None,
-        'password': None
-    }
