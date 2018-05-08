@@ -1,5 +1,6 @@
 from kafka import KafkaProducer
 import ujson
+from influxdb import InfluxDBClient
 
 from flask import Flask
 from flask_cors import CORS
@@ -28,11 +29,12 @@ def create_app(*config_cls):
     Mongo().init_app(app_)
     Router().init_app(app_)
 
-    kafka_producer = KafkaProducer(
+    app_.config['KAFKA_PRODUCER'] = KafkaProducer(
         bootstrap_servers=app_.config['KAFKA_BROKERS'],
         value_serializer=lambda v: ujson.dumps(v).encode('utf-8')
     )
 
-    app_.config['KAFKA_PRODUCER'] = kafka_producer
+    db_name = app_.config['INFLUX_DB_SETTINGS']['db']
+    app_.config['INFLUX_CLIENT'] = InfluxDBClient(database=db_name)
 
     return app_
