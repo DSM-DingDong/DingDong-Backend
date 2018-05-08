@@ -62,12 +62,13 @@ class InitializeInfo(BaseResource):
         if not account:
             abort(400)
 
-        # TODO 이미 채워져 있는 경우에도 response 하나 있어야 함
+        if all([account.shortest_cycle, account.longest_cycle, account.last_mens_start_date]):
+            return Response('', 100)
 
         if shortest_cycle > longest_cycle:
             return {
                 'msg': 'cycle'
-            }
+            }, 400
 
         account.update(
             shortest_cycle=shortest_cycle,
@@ -77,3 +78,5 @@ class InitializeInfo(BaseResource):
 
         kafka_producer = current_app.config['KAFKA_PRODUCER']
         kafka_producer.send('id_needs_calendar_refresh', {'id': id})
+
+        return Response('', 201)
