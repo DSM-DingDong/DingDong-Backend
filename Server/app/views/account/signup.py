@@ -22,12 +22,25 @@ class IDCheck(BaseResource):
             return Response('', 200)
 
 
+@api.resource('/signup')
 class Signup(BaseResource):
+    @json_required({'id': str, 'pw': str})
     def post(self):
         """
         자체 계정 회원가입
         """
+        id = request.json['id']
+        pw = request.json['pw']
 
+        if SystemAccountModel.objects(id=id):
+            abort(409)
+        else:
+            SystemAccountModel(
+                id=id,
+                pw=generate_password_hash(pw)
+            ).save()
+
+            return Response('', 201)
 
 class InitializeInfo(BaseResource):
     def post(self):
