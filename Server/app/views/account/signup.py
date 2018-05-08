@@ -16,7 +16,7 @@ class IDCheck(BaseResource):
         """
         자체 계정 ID 중복체크
         """
-        if SystemAccountModel.objects(id=id):
+        if AccountBase.objects(id=id):
             # 중복됨
             abort(409)
         else:
@@ -34,7 +34,7 @@ class Signup(BaseResource):
         id = request.json['id']
         pw = request.json['pw']
 
-        if SystemAccountModel.objects(id=id):
+        if AccountBase.objects(id=id):
             abort(409)
         else:
             SystemAccountModel(
@@ -60,7 +60,9 @@ class InitializeInfo(BaseResource):
         account = AccountBase.objects(id=id).first()
 
         if not account:
-            abort(400)
+            return {
+                'msg': 'account'
+            }, 400
 
         if all([account.shortest_cycle, account.longest_cycle, account.last_mens_start_date]):
             return Response('', 100)
