@@ -1,5 +1,4 @@
 from app.models import *
-from app.models.account import AccountModel
 
 
 class VoiceModel(Document):
@@ -8,7 +7,7 @@ class VoiceModel(Document):
     }
 
     owner = ReferenceField(
-        document_type=ReferenceField,
+        document_type='AccountModel',
         required=True
     )
 

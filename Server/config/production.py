@@ -13,17 +13,3 @@ class ProductionConfig(Config):
         'port': PORT,
         'debug': DEBUG
     })
-
-    MONGODB_SETTINGS = {
-        'db': Config.SERVICE_NAME,
-        'username': None,
-        'password': None
-    }
-
-    KAFKA_BROKERS = (
-        'localhost:9092'
-    )
-
-    INFLUX_DB_SETTINGS = {
-        'db': Config.SERVICE_NAME.replace('-', '_')
-    }

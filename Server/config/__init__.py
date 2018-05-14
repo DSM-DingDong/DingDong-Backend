@@ -1,9 +1,12 @@
 from datetime import timedelta
 import os
 
+import ujson
+
 
 class Config:
     SERVICE_NAME = 'DingDong'
+    SERVICE_NAME_UPPER = SERVICE_NAME.upper()
     REPRESENTATIVE_HOST = None
 
     RUN_SETTING = {
@@ -16,3 +19,33 @@ class Config:
     JWT_ACCESS_TOKEN_EXPIRES = timedelta(days=30)
     JWT_REFRESH_TOKEN_EXPIRES = timedelta(days=365)
     JWT_HEADER_TYPE = 'JWT'
+
+    MONGODB_SETTINGS = {
+        'db': SERVICE_NAME,
+        'host': None,
+        'port': None,
+        'username': None,
+        'password': os.getenv('MONGO_PW_{}'.format(SERVICE_NAME_UPPER))
+    }
+
+    KAFKA_SETTINGS = {
+        'bootstrap_servers': (
+            'localhost:9092'
+        ),
+        'value_serializer': lambda v: ujson.dumps(v).encode('utf-8')
+    }
+
+    REDIS_SETTINGS = {
+        'host': 'localhost',
+        'port': 6379,
+        'password': os.getenv('REDIS_PW_{}'.format(SERVICE_NAME_UPPER)),
+        'db': 0
+    }
+
+    INFLUX_DB_SETTINGS = {
+        'host': 'localhost',
+        'port': 8086,
+        'username': 'root',
+        'password': os.getenv('INFLUX_PW_{}'.format(SERVICE_NAME_UPPER), 'root'),
+        'database': SERVICE_NAME.replace('-', '_')
+    }

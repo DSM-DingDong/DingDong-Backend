@@ -63,6 +63,6 @@ class RefreshTokenModel(Document):
     pw_snapshot = StringField()
 
     owner = ReferenceField(
-        document_type=AccountBase,
+        document_type='AccountBase',
         required=True
     )
