@@ -65,7 +65,7 @@ class InitializeInfo(BaseResource):
             }, 400
 
         if all([account.shortest_cycle, account.longest_cycle, account.last_mens_start_date]):
-            return Response('', 100)
+            return Response('', 201)
 
         if shortest_cycle > longest_cycle:
             return {
