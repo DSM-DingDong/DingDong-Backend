@@ -3,9 +3,10 @@ import gzip
 import ujson
 import time
 
-from flask import Response, abort, after_this_request, g, request
+from flask import Response, abort, after_this_request, current_app, g, jsonify, request
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from flask_restful import Resource
+from werkzeug.exceptions import HTTPException
 
 
 def after_request(response):
@@ -14,6 +15,20 @@ def after_request(response):
     """
     response.headers['X-Content-Type-Options'] = 'nosniff'
     response.headers['X-Frame-Options'] = 'deny'
+
+    current_app.config['INFLUXDB_CLIENT'].write_points([
+        {
+            'measurement': 'api_process_data',
+            'tags': {
+                'status': response.status,
+                'method': request.method,
+                'uri': request.path
+            },
+            'fields': {
+                'count': 1
+            }
+        }
+    ])
 
     return response
 
@@ -89,7 +104,7 @@ def json_required(required_keys):
                 abort(406)
 
             for key, typ in required_keys.items():
-                if key not in request.json or not isinstance(request.json[key], typ):
+                if key not in request.json or not type(request.json[key]) is typ:
                     abort(400)
                 if typ is str and not request.json[key]:
                     abort(400)
@@ -121,6 +136,12 @@ class BaseResource(Resource):
             content_type='application/json; charset=utf8',
             **kwargs
         )
+
+    class ValidationError(Exception):
+        def __init__(self, description='', *args):
+            self.description = description
+
+            super(BaseResource.ValidationError, self).__init__(*args)
 
 
 class Router:
