@@ -42,10 +42,10 @@ class Config:
         'db': 0
     }
 
-    INFLUX_DB_SETTINGS = {
+    INFLUXDB_SETTINGS = {
         'host': 'localhost',
         'port': 8086,
         'username': 'root',
         'password': os.getenv('INFLUX_PW_{}'.format(SERVICE_NAME_UPPER), 'root'),
-        'database': SERVICE_NAME.replace('-', '_')
+        'database': SERVICE_NAME
     }
