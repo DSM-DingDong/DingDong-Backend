@@ -6,7 +6,7 @@
 # Server/app/views/account/auth.py: 3
 # Server/app/views/account/signup.py: 3
 # Server/tests/views/__init__.py: 4
-Flask == 1.0.1
+Flask == 1.0.2
 
 # Server/app/__init__.py: 7
 Flask_Cors == 3.0.3
@@ -38,7 +38,7 @@ kafka_python == 1.4.2
 mongoengine == 0.15.0
 
 # Server/app/models/support/mongo_helper.py: 1
-pymongo == 3.6.0
+pymongo == 3.6.1
 
 # Server/app/__init__.py: 4
 redis == 2.10.6
