@@ -4,7 +4,7 @@ from flask import Blueprint, Response, abort, current_app, request
 from flask_restful import Api
 from werkzeug.security import generate_password_hash
 
-from app.models.account import AccountBase, SystemAccountModel
+from app.models.account import AccountModel
 from app.views import BaseResource, json_required
 
 api = Api(Blueprint(__name__, __name__))
@@ -16,7 +16,7 @@ class IDCheck(BaseResource):
         """
         자체 계정 ID 중복체크
         """
-        if AccountBase.objects(id=id):
+        if AccountModel.objects(id=id):
             # 중복됨
             abort(409)
         else:
@@ -36,10 +36,10 @@ class Signup(BaseResource):
         id = payload['id']
         pw = payload['pw']
 
-        if AccountBase.objects(id=id):
+        if AccountModel.objects(id=id):
             abort(409)
         else:
-            SystemAccountModel(
+            AccountModel(
                 id=id,
                 pw=generate_password_hash(pw)
             ).save()
@@ -61,7 +61,7 @@ class InitializeInfo(BaseResource):
         longest_cycle = payload['longestCycle']
         latest_mens_start_date = datetime.strptime(payload['latestMensStartDate'], '%Y-%m-%d')
 
-        account = AccountBase.objects(id=id).first()
+        account = AccountModel.objects(id=id).first()
 
         if not account:
             return {

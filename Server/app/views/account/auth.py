@@ -5,8 +5,8 @@ from flask_jwt_extended import create_access_token
 from flask_restful import Api
 from werkzeug.security import check_password_hash
 
-from app.models.account import SystemAccountModel, FacebookAccountModel, TokenModel, AccessTokenModel, RefreshTokenModel
-from app.views import BaseResource, auth_required, json_required
+from app.models.account import AccountModel, TokenModel, AccessTokenModel, RefreshTokenModel
+from app.views import BaseResource, json_required
 
 api = Api(Blueprint(__name__, __name__))
 
@@ -23,13 +23,13 @@ class Auth(BaseResource):
         id = payload['id']
         pw = payload['pw']
 
-        account = SystemAccountModel.objects(id=id).first()
+        user = AccountModel.objects(id=id).first()
 
-        if not account:
+        if not user:
             abort(401)
         else:
-            if check_password_hash(account.pw, pw):
-                if not all([account.shortest_cycle, account.longest_cycle, account.last_mens_start_date]):
+            if check_password_hash(user.pw, pw):
+                if not all([user.shortest_cycle, user.longest_cycle, user.last_mens_start_date]):
                     return Response('', 204)
                 else:
                     return {

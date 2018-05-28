@@ -4,10 +4,9 @@ from uuid import uuid4
 from app.models import *
 
 
-class AccountBase(Document):
+class AccountModel(Document):
     meta = {
-        'abstract': True,
-        'allow_inheritance': True
+        'collection': 'account'
     }
 
     signup_time = DateTimeField(
@@ -18,6 +17,8 @@ class AccountBase(Document):
     id = StringField(
         primary_key=True
     )
+
+    pw = StringField()
 
     shortest_cycle = IntField()
     longest_cycle = IntField()
@@ -36,22 +37,6 @@ class AccountBase(Document):
     # calendar 필드가 마지막으로 바뀐 시간
 
 
-class SystemAccountModel(AccountBase):
-    meta = {
-        'collection': 'system_account'
-    }
-
-    pw = StringField()
-
-
-class FacebookAccountModel(AccountBase):
-    meta = {
-        'collection': 'facebook_account'
-    }
-
-    connected_sns = StringField()
-
-
 class TokenModel(Document):
     meta = {
         'abstract': True,
@@ -59,8 +44,8 @@ class TokenModel(Document):
     }
 
     owner = ReferenceField(
-        document_type='AccountBase',
         primary_key=True
+        document_type='AccountModel',
     )
 
     identity = UUIDField(
