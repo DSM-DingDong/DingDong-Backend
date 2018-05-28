@@ -3,8 +3,12 @@ from unittest import TestCase as TC
 
 import pymongo
 from flask import Response
+from flask_jwt_extended import create_access_token, create_refresh_token
+from werkzeug.security import generate_password_hash
 
 from app import create_app
+from app.models.account import AccountModel, TokenModel, AccessTokenModel, RefreshTokenModel
+
 from config.test import TestConfig
 
 app = create_app(TestConfig)
@@ -36,6 +40,14 @@ class TCBase(TC):
             self.secondary_user_refresh_token = None
 
     def setUp(self):
+        self.primary_user_id = 'primary_user'
+        self.secondary_user_id = 'secondary_user'
+
+        self.primary_user_pw = self.secondary_user_pw = 'pw'
+
+        self.encrypted_primary_user_pw = generate_password_hash(self.primary_user_pw)
+        self.encrypted_secondary_user_pw = generate_password_hash(self.secondary_user_pw)
+
         self._create_fake_account()
         self._generate_tokens()
 
