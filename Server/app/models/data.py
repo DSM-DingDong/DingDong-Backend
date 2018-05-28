@@ -8,7 +8,8 @@ class VoiceModel(Document):
 
     owner = ReferenceField(
         document_type='AccountModel',
-        required=True
+        required=True,
+        reverse_delete_rule=CASCADE
     )
 
     filename = StringField(

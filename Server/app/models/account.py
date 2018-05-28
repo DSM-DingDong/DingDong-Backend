@@ -44,8 +44,9 @@ class TokenModel(Document):
     }
 
     owner = ReferenceField(
-        primary_key=True
         document_type='AccountModel',
+        primary_key=True,
+        reverse_delete_rule=CASCADE
     )
 
     identity = UUIDField(
