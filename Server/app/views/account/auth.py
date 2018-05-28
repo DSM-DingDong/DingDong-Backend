@@ -5,22 +5,10 @@ from flask_jwt_extended import create_access_token
 from flask_restful import Api
 from werkzeug.security import check_password_hash
 
-from app.models.account import SystemAccountModel, FacebookAccountModel, RefreshTokenModel
+from app.models.account import SystemAccountModel, FacebookAccountModel, TokenModel, AccessTokenModel, RefreshTokenModel
 from app.views import BaseResource, auth_required, json_required
 
 api = Api(Blueprint(__name__, __name__))
-
-
-def create_refresh_token(owner):
-    from flask_jwt_extended import create_refresh_token
-
-    while True:
-        uuid = uuid4()
-
-        if not RefreshTokenModel.objects(token=uuid):
-            RefreshTokenModel(token=uuid, pw_snapshot=owner.pw, owner=owner).save()
-
-            return create_refresh_token(uuid)
 
 
 @api.resource('/auth/common')
@@ -45,9 +33,11 @@ class Auth(BaseResource):
                     return Response('', 204)
                 else:
                     return {
-                        'accessToken': create_access_token(account.id),
-                        'refreshToken': create_refresh_token(account)
+                        'accessToken': TokenModel.generate_token(AccessTokenModel, account),
+                        'refreshToken': TokenModel.generate_token(RefreshTokenModel, account)
                     }
+            else:
+                abort(401)
 
 
 @api.resource('/auth/facebook')
