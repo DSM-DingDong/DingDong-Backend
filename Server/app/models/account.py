@@ -51,18 +51,32 @@ class FacebookAccountModel(AccountBase):
     connected_sns = StringField()
 
 
-class RefreshTokenModel(Document):
+class TokenModel(Document):
+    meta = {
+        'abstract': True,
+        'allow_inheritance': True
+    }
+
+    owner = ReferenceField(
+        document_type='AccountBase',
+        primary_key=True
+    )
+
+    identity = UUIDField(
+        required=True,
+        unique=True
+    )
+
+
+class AccessTokenModel(TokenModel):
+    meta = {
+        'collection': 'access_token'
+    }
+
+
+class RefreshTokenModel(TokenModel):
     meta = {
         'collection': 'refresh_token'
     }
 
-    token = UUIDField(
-        primary_key=True
-    )
-
     pw_snapshot = StringField()
-
-    owner = ReferenceField(
-        document_type='AccountBase',
-        required=True
-    )
