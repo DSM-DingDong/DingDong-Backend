@@ -31,8 +31,10 @@ class Signup(BaseResource):
         """
         자체 계정 회원가입
         """
-        id = request.json['id']
-        pw = request.json['pw']
+        payload = request.json
+
+        id = payload['id']
+        pw = payload['pw']
 
         if AccountBase.objects(id=id):
             abort(409)
@@ -52,10 +54,12 @@ class InitializeInfo(BaseResource):
         """
         기본 정보 업로드
         """
-        id = request.json['id']
-        shortest_cycle = request.json['shortestCycle']
-        longest_cycle = request.json['longestCycle']
-        latest_mens_start_date = datetime.strptime(request.json['latestMensStartDate'], '%Y-%m-%d')
+        payload = request.json
+
+        id = payload['id']
+        shortest_cycle = payload['shortestCycle']
+        longest_cycle = payload['longestCycle']
+        latest_mens_start_date = datetime.strptime(payload['latestMensStartDate'], '%Y-%m-%d')
 
         account = AccountBase.objects(id=id).first()
 

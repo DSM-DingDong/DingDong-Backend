@@ -30,8 +30,10 @@ class Auth(BaseResource):
         """
         자체 계정 로그인
         """
-        id = request.json['id']
-        pw = request.json['pw']
+        payload = request.json
+
+        id = payload['id']
+        pw = payload['pw']
 
         account = SystemAccountModel.objects(id=id).first()
 
