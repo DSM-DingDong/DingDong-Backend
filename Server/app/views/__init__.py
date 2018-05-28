@@ -173,3 +173,8 @@ class Router:
         """
         app.after_request(after_request)
         app.register_error_handler(Exception, exception_handler)
+
+        from app.views.account import auth, signup
+
+        app.register_blueprint(auth.api.blueprint)
+        app.register_blueprint(signup.api.blueprint)
