@@ -29,8 +29,21 @@ class TCBase(TC):
         super(TCBase, self).__init__(*args, **kwargs)
 
     def _create_fake_account(self):
-        self.primary_user = None
-        self.secondary_user = None
+        self.primary_user = AccountModel(
+            id=self.primary_user_id,
+            pw=self.encrypted_primary_user_pw,
+            shortest_cycle=25,
+            longest_cycle=35,
+            last_mens_start_date=datetime(2018, 5, 15)
+        ).save()
+
+        self.secondary_user = AccountModel(
+            id=self.secondary_user_id,
+            pw=self.encrypted_secondary_user_pw,
+            shortest_cycle=28,
+            longest_cycle=32,
+            last_mens_start_date=datetime(2018, 5, 20)
+        ).save()
 
     def _generate_tokens(self):
         with app.app_context():
