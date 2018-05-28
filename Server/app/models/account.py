@@ -24,10 +24,10 @@ class AccountModel(Document):
     longest_cycle = IntField()
     # 최근 6개월 간 가장 짧은 주기와 가장 긴 주기
 
-    latest_mens_start_date = DateTimeField()
+    last_mens_start_date = DateTimeField()
     # 가장 최근 월경시장일
 
-    calendar = DictField(required=True, default={})
+    calendar = DictField(default={})
     # 안전일: 1
     # 가임일: 2
     # 월경시작일: 3

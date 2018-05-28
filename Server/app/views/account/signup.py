@@ -49,7 +49,7 @@ class Signup(BaseResource):
 
 @api.resource('/initialize/info')
 class InitializeInfo(BaseResource):
-    @json_required({'id': str, 'shortestCycle': int, 'longestCycle': int, 'latestMensStartDate': str})
+    @json_required({'id': str, 'shortestCycle': int, 'longestCycle': int, 'lastMensStartDate': str})
     def post(self):
         """
         기본 정보 업로드
@@ -59,7 +59,7 @@ class InitializeInfo(BaseResource):
         id = payload['id']
         shortest_cycle = payload['shortestCycle']
         longest_cycle = payload['longestCycle']
-        latest_mens_start_date = datetime.strptime(payload['latestMensStartDate'], '%Y-%m-%d')
+        last_mens_start_date = datetime.strptime(payload['lastMensStartDate'], '%Y-%m-%d')
 
         account = AccountModel.objects(id=id).first()
 
@@ -79,7 +79,7 @@ class InitializeInfo(BaseResource):
         account.update(
             shortest_cycle=shortest_cycle,
             longest_cycle=longest_cycle,
-            latest_mens_start_date=latest_mens_start_date
+            last_mens_start_date=last_mens_start_date
         )
 
         kafka_producer = current_app.config['KAFKA_PRODUCER']
