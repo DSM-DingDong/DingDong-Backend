@@ -1,7 +1,7 @@
 from uuid import uuid4
 
 from flask import Blueprint, Response, abort, request
-from flask_jwt_extended import create_access_token
+from flask_jwt_extended import create_access_token, create_refresh_token
 from flask_restful import Api
 from werkzeug.security import check_password_hash
 
@@ -33,8 +33,8 @@ class Auth(BaseResource):
                     return Response('', 204)
                 else:
                     return {
-                        'accessToken': TokenModel.generate_token(AccessTokenModel, account),
-                        'refreshToken': TokenModel.generate_token(RefreshTokenModel, account)
+                        'accessToken': create_access_token(TokenModel.generate_token(AccessTokenModel, user)),
+                        'refreshToken': create_refresh_token(TokenModel.generate_token(RefreshTokenModel, user))
                     }
             else:
                 abort(401)
