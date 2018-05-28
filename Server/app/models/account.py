@@ -1,4 +1,5 @@
 from datetime import datetime
+from uuid import uuid4
 
 from app.models import *
 
@@ -66,6 +67,24 @@ class TokenModel(Document):
         required=True,
         unique=True
     )
+
+    @classmethod
+    def generate_token(cls, model, owner):
+        while True:
+            uuid = uuid4()
+
+            if not model.objects(identity=uuid):
+                params = {
+                    'owner': owner,
+                    'identity': uuid
+                }
+
+                if isinstance(model, RefreshTokenModel):
+                    params['pw_snapshot'] = owner.pw
+
+                model(**params).save()
+
+                return str(uuid)
 
 
 class AccessTokenModel(TokenModel):
