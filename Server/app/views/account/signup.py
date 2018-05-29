@@ -82,7 +82,8 @@ class InitializeInfo(BaseResource):
             last_mens_start_date=last_mens_start_date
         )
 
-        kafka_producer = current_app.config['KAFKA_PRODUCER']
-        kafka_producer.send('id_needs_calendar_refresh', {'id': id})
+        if not current_app.testing:
+            kafka_producer = current_app.config['KAFKA_PRODUCER']
+            kafka_producer.send('id_needs_calendar_refresh', {'id': id})
 
         return Response('', 201)

@@ -30,7 +30,9 @@ def create_app(*config_cls):
     Router().init_app(app_)
 
     connect(**app_.config['MONGODB_SETTINGS'])
-    app_.config['KAFKA_PRODUCER'] = KafkaProducer(**app_.config['KAFKA_SETTINGS'])
+    if not app_.testing:
+        app_.config['KAFKA_PRODUCER'] = KafkaProducer(**app_.config['KAFKA_SETTINGS'])
+        
     app_.config['REDIS_CLIENT'] = Redis(**app_.config['REDIS_SETTINGS'])
     app_.config['INFLUXDB_CLIENT'] = InfluxDBClient(**app_.config['INFLUXDB_SETTINGS'])
 
