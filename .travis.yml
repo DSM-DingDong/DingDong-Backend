@@ -14,7 +14,10 @@ matrix:
     - python: "nightly"
   fast_finish: true
 
-services: mongodb
+before_install:
+- docker run -d -p 6379:6379 redis
+- docker run -d -p 8086:8086 influxdb
+- docker run -d -p 27017:27017 mongo
 
 install:
   - pip3 install -r requirements.txt
