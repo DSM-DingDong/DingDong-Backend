@@ -21,16 +21,17 @@ class TCBase(TC):
     mongo_setting['db'] = db_name
 
     def __init__(self, *args, **kwargs):
-        self.client = app.test_client()
+        self.app = app
+        self.client = self.app.test_client()
         self.today = datetime.now().strftime('%Y-%m-%d')
         self.now = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-        self.token_regex = '(\w+\.){2}\w+'
+        self.token_regex = '([\w\-\_]+\.){2}[\w\-\_]+'
 
         super(TCBase, self).__init__(*args, **kwargs)
 
     def _create_fake_account(self):
         self.primary_user = AccountModel(
-            id=self.primary_user_id,
+            id='primary_user',
             pw=self.encrypted_primary_user_pw,
             shortest_cycle=25,
             longest_cycle=35,
@@ -38,7 +39,7 @@ class TCBase(TC):
         ).save()
 
         self.secondary_user = AccountModel(
-            id=self.secondary_user_id,
+            id='secondary_user',
             pw=self.encrypted_secondary_user_pw,
             shortest_cycle=28,
             longest_cycle=32,
@@ -54,9 +55,6 @@ class TCBase(TC):
             self.secondary_user_refresh_token = create_refresh_token(TokenModel.generate_token(RefreshTokenModel, self.secondary_user))
 
     def setUp(self):
-        self.primary_user_id = 'primary_user'
-        self.secondary_user_id = 'secondary_user'
-
         self.primary_user_pw = self.secondary_user_pw = 'pw'
 
         self.encrypted_primary_user_pw = generate_password_hash(self.primary_user_pw)

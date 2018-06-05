@@ -1,0 +1,78 @@
+import jwt
+
+from app.models.account import AccountModel, AccessTokenModel, RefreshTokenModel
+
+from tests.views import TCBase
+
+
+class TestAuth(TCBase):
+    """
+    자체 계정 로그인을 테스트합니다.
+    """
+
+    def __init__(self, *args, **kwargs):
+        super(TestAuth, self).__init__(*args, **kwargs)
+
+        self.method = self.client.post
+        self.target_uri = '/auth/common'
+
+    def setUp(self):
+        super(TestAuth, self).setUp()
+
+        # ---
+
+        self._request = lambda *, token=None, id=self.primary_user.id, pw=self.primary_user_pw: self.request(
+            self.method,
+            self.target_uri,
+            token,
+            json={
+                'id': id,
+                'pw': pw
+            }
+        )
+
+    def testAuthSuccess(self):
+        # (1) 로그인
+        resp = self._request()
+
+        # (2) status code 200
+        self.assertEqual(resp.status_code, 200)
+
+        # (3) response data
+        data = resp.json
+
+        self.assertIn('accessToken', data)
+        self.assertIn('refreshToken', data)
+
+        access_token = data['accessToken']
+        refresh_token = data['refreshToken']
+
+        self.assertIsInstance(access_token, str)
+        self.assertIsInstance(refresh_token, str)
+
+        self.assertRegex(data['accessToken'], self.token_regex)
+        self.assertRegex(data['refreshToken'], self.token_regex)
+
+        # (4) 데이터베이스 확인
+        access_token_obj = AccessTokenModel.objects(owner=self.primary_user).first()
+        self.assertTrue(access_token_obj)
+        self.assertEqual(jwt.decode(access_token, self.app.secret_key, 'HS256')['identity'], str(access_token_obj.identity))
+
+        refresh_token_obj = RefreshTokenModel.objects(owner=self.primary_user).first()
+        self.assertTrue(access_token_obj)
+        self.assertEqual(jwt.decode(refresh_token, self.app.secret_key, 'HS256')['identity'], str(refresh_token_obj.identity))
+
+    def testAuthFailure_incorrectID(self):
+        # (1) 존재하지 않는 ID로 로그인
+        resp = self._request(id=self.primary_user.id + '1')
+
+        # (2) status code 401
+        self.assertEqual(resp.status_code, 401)
+
+    def testAuthFailure_incorrectPW(self):
+        # (1) 틀린 PW로 로그인
+        resp = self._request(pw=self.primary_user_pw + '1')
+
+        # (2) status code 401
+        self.assertEqual(resp.status_code, 401)
+
