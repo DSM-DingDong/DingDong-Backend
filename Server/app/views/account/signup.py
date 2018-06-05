@@ -47,16 +47,15 @@ class Signup(BaseResource):
             return Response('', 201)
 
 
-@api.resource('/initialize/info')
+@api.resource('/initialize/info/<id>')
 class InitializeInfo(BaseResource):
-    @json_required({'id': str, 'shortestCycle': int, 'longestCycle': int, 'lastMensStartDate': str})
-    def post(self):
+    @json_required({'shortestCycle': int, 'longestCycle': int, 'lastMensStartDate': str})
+    def post(self, id):
         """
         기본 정보 업로드
         """
         payload = request.json
 
-        id = payload['id']
         shortest_cycle = payload['shortestCycle']
         longest_cycle = payload['longestCycle']
         last_mens_start_date = datetime.strptime(payload['lastMensStartDate'], '%Y-%m-%d')
@@ -64,17 +63,13 @@ class InitializeInfo(BaseResource):
         account = AccountModel.objects(id=id).first()
 
         if not account:
-            return {
-                'msg': 'account'
-            }, 400
+            return Response('', 204)
 
         if all([account.shortest_cycle, account.longest_cycle, account.last_mens_start_date]):
             return Response('', 201)
 
         if shortest_cycle > longest_cycle:
-            return {
-                'msg': 'cycle'
-            }, 400
+            abort(400)
 
         account.update(
             shortest_cycle=shortest_cycle,

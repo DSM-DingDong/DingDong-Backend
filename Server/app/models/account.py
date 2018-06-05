@@ -10,7 +10,6 @@ class AccountModel(Document):
     }
 
     signup_time = DateTimeField(
-        required=True,
         default=datetime.now()
     )
 

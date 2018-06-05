@@ -67,7 +67,7 @@ class FacebookAuth(BaseResource):
         if not user:
             # 사용자가 미존재, 회원가입을 함께 시켜줌
             if self.is_available_fb_id(fb_id):
-                AccountModel(
+                user = AccountModel(
                     id=fb_id
                 ).save()
             else:
