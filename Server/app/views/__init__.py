@@ -178,3 +178,11 @@ class Router:
 
         app.register_blueprint(auth.api.blueprint)
         app.register_blueprint(signup.api.blueprint)
+
+        from app.views.info import main
+
+        app.register_blueprint(main.api.blueprint)
+
+        from app.views.voice import voice
+
+        app.register_blueprint(voice.api.blueprint)

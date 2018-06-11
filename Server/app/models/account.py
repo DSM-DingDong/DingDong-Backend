@@ -27,6 +27,7 @@ class AccountModel(Document):
     # 가장 최근 월경시장일
 
     calendar = DictField(default={})
+    # { YYYY-MM-DD : value, ... }
     # 안전일: 1
     # 가임일: 2
     # 월경시작일: 3

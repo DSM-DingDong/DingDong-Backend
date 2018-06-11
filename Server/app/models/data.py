@@ -1,5 +1,3 @@
-from datetime import datetime
-
 from app.models import *
 
 
@@ -9,7 +7,7 @@ class VoiceModel(Document):
     }
 
     date = StringField(
-        default=datetime.now().strftime('%Y-%m-%d')
+        required=True
     )
 
     owner = ReferenceField(
@@ -19,5 +17,6 @@ class VoiceModel(Document):
     )
 
     filename = StringField(
-        required=True
+        required=True,
+        unique=True
     )
