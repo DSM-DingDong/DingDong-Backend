@@ -1,8 +1,10 @@
 import requests
 import ujson
+from uuid import UUID
 
 from flask import Blueprint, Response, abort, request
 from flask_jwt_extended import create_access_token, create_refresh_token
+from flask_jwt_extended import jwt_refresh_token_required, get_jwt_identity
 from flask_restful import Api
 from werkzeug.security import check_password_hash
 
@@ -21,15 +23,12 @@ class Auth(BaseResource):
         """
         payload = request.json
 
-        id = payload['id']
-        pw = payload['pw']
-
-        user = AccountModel.objects(id=id).first()
+        user = AccountModel.objects(id=payload['id']).first()
 
         if not user:
             abort(401)
         else:
-            if check_password_hash(user.pw, pw):
+            if check_password_hash(user.pw, payload['pw']):
                 if not all([user.shortest_cycle, user.longest_cycle, user.last_mens_start_date]):
                     return Response('', 204)
                 else:
