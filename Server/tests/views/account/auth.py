@@ -1,4 +1,8 @@
+from uuid import uuid4
+
 import jwt
+
+from flask_jwt_extended import create_refresh_token
 
 from app.models.account import AccountModel, AccessTokenModel, RefreshTokenModel
 
@@ -133,7 +137,7 @@ class TestFacebookAuth(TCBase):
         self.assertEqual(jwt.decode(access_token, self.app.secret_key, 'HS256')['identity'], str(access_token_obj.identity))
 
         refresh_token_obj = RefreshTokenModel.objects(owner=user).first()
-        self.assertTrue(access_token_obj)
+        self.assertTrue(refresh_token_obj)
         self.assertEqual(jwt.decode(refresh_token, self.app.secret_key, 'HS256')['identity'], str(refresh_token_obj.identity))
 
     def testAuthFailure_invalidFbId(self):
@@ -142,3 +146,65 @@ class TestFacebookAuth(TCBase):
 
         # (2) status code 401
         self.assertEqual(resp.status_code, 401)
+
+
+class TestRefresh(TCBase):
+    """
+    JWT 토큰 refresh를 테스트합니다.
+    """
+
+    def __init__(self, *args, **kwargs):
+        super(TestRefresh, self).__init__(*args, **kwargs)
+
+        self.method = self.client.post
+        self.target_uri = '/refresh'
+
+    def setUp(self):
+        super(TestRefresh, self).setUp()
+
+        # ---
+
+        self._request = lambda *, token=None: self.request(
+            self.method,
+            self.target_uri,
+            token
+        )
+
+    def testRefreshSuccess(self):
+        # (1) refresh
+        resp = self._request(token=self.primary_user_refresh_token)
+
+        # (2) status code 200
+        self.assertEqual(resp.status_code, 200)
+
+        # (3) response data
+        data = resp.json
+
+        self.assertIn('accessToken', data)
+
+        access_token = data['accessToken']
+
+        self.assertIsInstance(access_token, str)
+
+        self.assertRegex(data['accessToken'], self.token_regex)
+
+        # (4) 데이터베이스 확인
+        access_token_obj = AccessTokenModel.objects(owner=self.primary_user).first()
+        self.assertTrue(access_token_obj)
+        self.assertEqual(jwt.decode(access_token, self.app.secret_key, 'HS256')['identity'], str(access_token_obj.identity))
+
+    def testRefreshFailure_invalidToken(self):
+        # (1) 유효하지 않은 refresh token을 통해 refresh
+        with self.app.app_context():
+            resp = self._request(token='JWT {}'.format(create_refresh_token(str(uuid4()))))
+
+        # (2) status code 401
+        self.assertEqual(resp.status_code, 401)
+
+    def testRefreshFailure_invalidIdentityFormat(self):
+        # (1) 유효하지 않은 identity 값이 들어간 refresh token을 통해 refresh
+        with self.app.app_context():
+            resp = self._request(token='JWT {}'.format(create_refresh_token('123')))
+
+        # (2) status code 422
+        self.assertEqual(resp.status_code, 422)

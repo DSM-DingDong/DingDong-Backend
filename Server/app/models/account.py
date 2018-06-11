@@ -83,6 +83,4 @@ class RefreshTokenModel(TokenModel):
         'collection': 'refresh_token'
     }
 
-    pw_snapshot = StringField(
-        required=True
-    )
+    pw_snapshot = StringField()

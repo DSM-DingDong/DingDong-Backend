@@ -48,11 +48,11 @@ class TCBase(TC):
 
     def _generate_tokens(self):
         with app.app_context():
-            self.primary_user_access_token = create_access_token(TokenModel.generate_token(AccessTokenModel, self.primary_user))
-            self.primary_user_refresh_token = create_refresh_token(TokenModel.generate_token(RefreshTokenModel, self.primary_user))
+            self.primary_user_access_token = 'JWT {}'.format(create_access_token(TokenModel.generate_token(AccessTokenModel, self.primary_user)))
+            self.primary_user_refresh_token = 'JWT {}'.format(create_refresh_token(TokenModel.generate_token(RefreshTokenModel, self.primary_user)))
 
-            self.secondary_user_access_token = create_access_token(TokenModel.generate_token(AccessTokenModel, self.secondary_user))
-            self.secondary_user_refresh_token = create_refresh_token(TokenModel.generate_token(RefreshTokenModel, self.secondary_user))
+            self.secondary_user_access_token = 'JWT {}'.format(create_access_token(TokenModel.generate_token(AccessTokenModel, self.secondary_user)))
+            self.secondary_user_refresh_token = 'JWT {}'.format(create_refresh_token(TokenModel.generate_token(RefreshTokenModel, self.secondary_user)))
 
     def setUp(self):
         self.primary_user_pw = self.secondary_user_pw = 'pw'
