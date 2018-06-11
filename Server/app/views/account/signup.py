@@ -16,12 +16,7 @@ class IDCheck(BaseResource):
         """
         자체 계정 ID 중복체크
         """
-        if AccountModel.objects(id=id):
-            # 중복됨
-            abort(409)
-        else:
-            # 중복되지 않음
-            return Response('', 200)
+        return Response('', 409 if AccountModel.objects(id=id) else 200)
 
 
 @api.resource('/signup')
@@ -33,15 +28,12 @@ class Signup(BaseResource):
         """
         payload = request.json
 
-        id = payload['id']
-        pw = payload['pw']
-
-        if AccountModel.objects(id=id):
+        if AccountModel.objects(id=payload['id']):
             abort(409)
         else:
             AccountModel(
                 id=id,
-                pw=generate_password_hash(pw)
+                pw=generate_password_hash(payload['pw'])
             ).save()
 
             return Response('', 201)
@@ -58,7 +50,6 @@ class InitializeInfo(BaseResource):
 
         shortest_cycle = payload['shortestCycle']
         longest_cycle = payload['longestCycle']
-        last_mens_start_date = datetime.strptime(payload['lastMensStartDate'], '%Y-%m-%d')
 
         account = AccountModel.objects(id=id).first()
 
@@ -74,7 +65,7 @@ class InitializeInfo(BaseResource):
         account.update(
             shortest_cycle=shortest_cycle,
             longest_cycle=longest_cycle,
-            last_mens_start_date=last_mens_start_date
+            last_mens_start_date=datetime.strptime(payload['lastMensStartDate'], '%Y-%m-%d')
         )
 
         if not current_app.testing:
