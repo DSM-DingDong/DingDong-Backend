@@ -80,7 +80,19 @@ class FacebookAuth(BaseResource):
 
 @api.resource('/refresh')
 class Refresh(BaseResource):
+    @jwt_refresh_token_required
     def post(self):
         """
         Access token refresh
         """
+        try:
+            token = RefreshTokenModel.objects(identity=UUID(get_jwt_identity())).first()
+
+            if not token:
+                abort(401)
+
+            return {
+                'accessToken': create_access_token(TokenModel.generate_token(AccessTokenModel, token.owner))
+            } if token.owner.pw == token.pw_snapshot else Response('', 205)
+        except ValueError:
+            abort(422)
