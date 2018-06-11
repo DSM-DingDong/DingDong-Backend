@@ -64,7 +64,7 @@ class TokenModel(Document):
                     'identity': uuid
                 }
 
-                if isinstance(model, RefreshTokenModel):
+                if model is RefreshTokenModel:
                     params['pw_snapshot'] = owner.pw
 
                 model(**params).save()
@@ -83,4 +83,6 @@ class RefreshTokenModel(TokenModel):
         'collection': 'refresh_token'
     }
 
-    pw_snapshot = StringField()
+    pw_snapshot = StringField(
+        required=True
+    )
