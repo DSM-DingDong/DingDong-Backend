@@ -1,7 +1,7 @@
 from datetime import datetime
 from uuid import uuid4
 
-from app.models import *
+from mongoengine import *
 
 
 class AccountModel(Document):
