@@ -68,8 +68,7 @@ class InitializeInfo(BaseResource):
             last_mens_start_date=datetime.strptime(payload['lastMensStartDate'], '%Y-%m-%d')
         )
 
-        if not current_app.testing:
-            kafka_producer = current_app.config['KAFKA_PRODUCER']
-            kafka_producer.send('id_needs_calendar_refresh', {'id': id})
+        redis_client = current_app.config['REDIS_CLIENT']
+        redis_client.lpush('queue:requires_calendar_refresh', id)
 
         return Response('', 201)

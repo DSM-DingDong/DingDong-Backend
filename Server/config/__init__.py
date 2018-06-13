@@ -28,13 +28,6 @@ class Config:
         'password': os.getenv('MONGO_PW_{}'.format(SERVICE_NAME_UPPER))
     }
 
-    KAFKA_SETTINGS = {
-        'bootstrap_servers': (
-            'localhost:9092'
-        ),
-        'value_serializer': lambda v: ujson.dumps(v).encode('utf-8')
-    }
-
     REDIS_SETTINGS = {
         'host': 'localhost',
         'port': 6379,
