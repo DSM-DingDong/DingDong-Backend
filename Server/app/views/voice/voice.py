@@ -1,11 +1,10 @@
-from datetime import datetime
-from uuid import uuid4
+import os
+from datetime import date
 
-from flask import Blueprint, current_app, g, request
+from flask import Blueprint, Response, current_app, g, request
 from flask_restful import Api
 
 from app.models.account import AccountModel
-from app.models.data import VoiceModel
 from app.views import BaseResource, auth_required
 
 api = Api(Blueprint(__name__, __name__))
@@ -16,24 +15,15 @@ api.prefix = ''
 class MainInfo(BaseResource):
     @auth_required(AccountModel)
     def post(self):
-        user = g.user
-
         file = request.files['file']
 
-        while True:
-            filename = str(uuid4())
+        today = str(date.today())
 
-            if not VoiceModel.objects(filename=filename):
-                VoiceModel(
-                    date=str(datetime.now().date()),
-                    owner=user,
-                    filename=filename
-                )
+        filename = '{}_{}.mp3'.format(today, g.user.id)
 
-                file.save('../../voice-files/{}'.format(filename))
+        file.save(os.path.join('voice-files', filename))
 
-                if not current_app.testing:
-                    kafka_producer = current_app.config['KAFKA_PRODUCER']
-                    kafka_producer.send('id_needs_calendar_refresh', {'id': id})
+        redis_client = current_app.config['REDIS_CLIENT']
+        redis_client.lpush('queue:requires_calendar_refresh', g.user.id)
 
-                break
+        return Response('', 201)
