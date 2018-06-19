@@ -28,7 +28,9 @@ class Signup(BaseResource):
         """
         payload = request.json
 
-        if AccountModel.objects(id=payload['id']):
+        id = payload['id']
+
+        if AccountModel.objects(id=id):
             abort(409)
         else:
             AccountModel(
@@ -57,7 +59,7 @@ class InitializeInfo(BaseResource):
             return Response('', 204)
 
         if all([account.shortest_cycle, account.longest_cycle, account.last_mens_start_date]):
-            return Response('', 201)
+            return Response('', 208)
 
         if shortest_cycle > longest_cycle:
             abort(400)
