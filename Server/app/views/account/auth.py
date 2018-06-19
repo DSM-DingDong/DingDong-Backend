@@ -30,7 +30,7 @@ class Auth(BaseResource):
         else:
             if check_password_hash(user.pw, payload['pw']):
                 if not all([user.shortest_cycle, user.longest_cycle, user.last_mens_start_date]):
-                    return Response('', 204)
+                    return Response('', 205)
                 else:
                     return {
                         'accessToken': create_access_token(TokenModel.generate_token(AccessTokenModel, user)),
