@@ -4,7 +4,6 @@ from flask import Blueprint, g
 from flask_restful import Api
 
 from app.models.account import AccountModel
-from app.models.data import VoiceModel
 from app.views import BaseResource, auth_required
 
 api = Api(Blueprint(__name__, __name__))
@@ -55,5 +54,5 @@ class MainInfo(BaseResource):
                 'start': mens_start_date,
                 'end': mens_end_date
             },
-            'needVoiceRecord': True if VoiceModel.objects(date=datetime.now().strftime('%Y-%m-%d'), owner=user) else False
+            # 'needVoiceRecord': True if VoiceModel.objects(date=datetime.now().strftime('%Y-%m-%d'), owner=user) else False
         }
