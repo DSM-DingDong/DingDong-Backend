@@ -26,6 +26,9 @@ class AccountModel(Document):
     last_mens_start_date = DateTimeField()
     # 가장 최근 월경시장일
 
+    voice_avg = DictField(default={})
+    # { YYYY-MM-DD : value, ... }
+
     calendar = DictField(default={})
     # { YYYY-MM-DD : value, ... }
     # 안전일: 1

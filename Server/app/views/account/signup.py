@@ -43,7 +43,7 @@ class Signup(BaseResource):
 
 @api.resource('/initialize/info/<id>')
 class InitializeInfo(BaseResource):
-    @json_required({'shortestCycle': int, 'longestCycle': int, 'lastMensStartDate': str})
+    @json_required({'shortestCycle': int, 'longestCycle': int, 'lastMensStartDate': str, 'todayStatus': int})
     def post(self, id):
         """
         기본 정보 업로드
@@ -52,6 +52,7 @@ class InitializeInfo(BaseResource):
 
         shortest_cycle = payload['shortestCycle']
         longest_cycle = payload['longestCycle']
+        today_status = payload['todayStatus']
 
         account = AccountModel.objects(id=id).first()
 
@@ -67,7 +68,8 @@ class InitializeInfo(BaseResource):
         account.update(
             shortest_cycle=shortest_cycle,
             longest_cycle=longest_cycle,
-            last_mens_start_date=datetime.strptime(payload['lastMensStartDate'], '%Y-%m-%d')
+            last_mens_start_date=datetime.strptime(payload['lastMensStartDate'], '%Y-%m-%d'),
+            calendar={str(datetime.now().date()): today_status}
         )
 
         redis_client = current_app.config['REDIS_CLIENT']
