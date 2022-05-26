@@ -27,6 +27,6 @@ PyYAML==3.12
 redis==2.10.6
 requests==2.19.0
 six==1.11.0
-ujson==1.35
+ujson==5.2.0
 urllib3==1.23
 Werkzeug==0.14.1
